@@ -1,4 +1,4 @@
-#include "definitions.h"
+ #include "definitions.h"
 #include "version.h"
 // ***************************************************************************
 // Load libraries for: WebServer / WiFiManager / WebSockets
@@ -255,6 +255,8 @@ void saveConfigCallback () {
 #ifdef CUSTOM_WS2812FX_ANIMATIONS
   #include "custom_ws2812fx_animations.h" // Add animations in this file
 #endif
+#include "ambient.h"
+#include "custom_clock.h"
 
 // function to Initialize the strip
 void initStrip(uint16_t stripSize = WS2812FXStripSettings.stripSize, neoPixelType RGBOrder = WS2812FXStripSettings.RGBOrder, uint8_t pin = WS2812FXStripSettings.pin){
@@ -295,6 +297,7 @@ void initStrip(uint16_t stripSize = WS2812FXStripSettings.stripSize, neoPixelTyp
 #ifdef CUSTOM_WS2812FX_ANIMATIONS
   strip->setCustomMode(0, F("Fire 2012"), myCustomEffect);
 #endif
+  strip->setCustomMode(1, F("Clock"), clockEffect);
   strip->start();
   if(mode != HOLD) mode = SET_MODE;
   saveWS2812FXStripSettings.once(3, writeStripConfigFS);
@@ -1150,10 +1153,16 @@ void setup() {
     }
     sprintf(last_state, "STA|%2d|%3d|%3d|%3d|%3d|%3d|%3d", mode, ws2812fx_mode, ws2812fx_speed, brightness, main_color.red, main_color.green, main_color.blue);
   #endif
+
+  Ambient_Initialize();
+  clockSwitchMode();
 }
 
 
 void loop() {
+  if(Ambient_Process()) {
+    if(!ha_send_data.active())  ha_send_data.once(5, tickerSendState);
+  }
   #ifdef ENABLE_BUTTON
     button();
   #endif

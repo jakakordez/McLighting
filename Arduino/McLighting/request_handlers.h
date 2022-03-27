@@ -1,6 +1,7 @@
 // ***************************************************************************
 // Request handlers
 // ***************************************************************************
+#include "Ambient.h"
 #ifdef ENABLE_E131
 void checkForRequests(void); //prototype
 
@@ -840,6 +841,10 @@ void checkForRequests() {
 
       root["speed"] = ws2812fx_speed;
 
+      root["temperature"] = Ambient_GetTemperature();
+      root["humidity"] = Ambient_GetHumidity();
+      root["illuminance"] = Ambient_GetIlluminance();
+
       //char modeName[30];
       //strncpy_P(modeName, (PGM_P)strip->getModeName(strip->getMode()), sizeof(modeName)); // copy from progmem
       #if defined(ENABLE_E131) and defined(ENABLE_HOMEASSISTANT)
@@ -883,7 +888,7 @@ void checkForRequests() {
         const char* state_in = root["state"];
         if (strcmp(state_in, on_cmd) == 0 and !(animation_on)) {
           stateOn = true;
-          ws2812fx_mode = FX_MODE_STATIC;
+          ws2812fx_mode = 56;
           mode = SET_MODE;
         }
         else if (strcmp(state_in, off_cmd) == 0) {
