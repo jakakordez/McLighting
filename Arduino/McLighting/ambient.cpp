@@ -64,10 +64,10 @@ int Ambient_Process() {
             tHumidity = humidity;
             tIlluminance = illuminance;
             change = 1;
+            Serial.printf("Temperature: %f\n", temperature);
+            Serial.printf("Humidity: %f\n", humidity);
+            Serial.printf("Illuminance: %f\n", illuminance);
         }
-        Serial.printf("Temperature: %f\n", temperature);
-        Serial.printf("Humidity: %f\n", humidity);
-        Serial.printf("Illuminance: %f\n", illuminance);
         return change;
     }
     return 0;

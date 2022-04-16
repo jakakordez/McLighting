@@ -138,7 +138,9 @@ int getTimeOffset(struct tm *tm){
 
 void clockSwitchMode(){
     if(strip) strip->setMode(56);
-    configTime(3600, 0, "pool.ntp.org", "time.nist.gov");
+    configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+    setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
+    tzset();
 }
 
 int ledIndex(int x, int y) {
@@ -175,7 +177,9 @@ void drawClock()
     int newDst = getTimeOffset(currentTime);
     if (dst != newDst) {
         dst = newDst;
-        configTime(3600, dst, "pool.ntp.org", "time.nist.gov");
+        configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+        setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
+        tzset();
     }
     float ill = Ambient_GetIlluminance();
     int seconds = currentTime->tm_sec;
@@ -211,7 +215,7 @@ void drawClock()
     else if ((seconds > 20 && seconds < 26) || (seconds > 40 && seconds < 46)) {
         float temperature = Ambient_GetTemperature();
         if (!isnan(temperature)) {
-            sprintf(text, "%2d °C", (int)(temperature + 0.5));
+            sprintf(text, "%2d ï¿½C", (int)(temperature + 0.5));
             drawText(1, text);
         }
     }
